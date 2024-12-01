@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "@langchain/community": "^0.3.16",
+    "@langchain/core": "^0.3.19",
+    "@langchain/openai": "^0.3.14",
+    "@langchain/textsplitters": "^0.1.0",
+    "@supabase/supabase-js": "^2.46.2",
+    "dotenv": "^16.4.5",
+    "openai": "^4.73.1"
+  }
+}
