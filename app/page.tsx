@@ -1,42 +1,17 @@
 'use client'
 
-import { useState , useEffect } from 'react';
-import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
+import { useState , useEffect } from 'react'
 
-export default function Home() {
-  const [text,setText] = useState('');
-  const splitter = new RecursiveCharacterTextSplitter({
-    chunkSize : 500,
-    chunkOverlap :50
-  })
+export default function home() {
+  const [prompt , setPrompt]  = useState('')
 
-
-  async function fetcher (){
-    try{
-      const res = await fetch('data.txt').then(res => res.text())
-      setText(res)
-    }catch(err){
-      console.log(err)
-    }
-  }
-
-  useEffect(()=>{
-    (async()=>{
-      await fetcher()
-    })()
-  },[])
-
-  useEffect(()=>{
-    (async()=>{
-    const output = await splitter.createDocuments([text])
-      console.log(output)
-    })()
-  },[text])
-
-
-  return (
-    <>
-      <h1>{text}</h1>
-    </>
+  return(
+    <section className='w-full h-screen flex justify-center items-center'>
+      <div className='w-sm flex flex-col gap-4'>
+        <label className=''> Enter the prompt </label>
+        <input type='text' value={prompt} onChange={(e)=>setPrompt(e.target.value)} className='border border-solid border-e-emerald-50'/>
+        <button className='text-black bg-white w-fit p-2 rounded-xl'> send </button>
+      </div>
+    </section>
   );
 }
