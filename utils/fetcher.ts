@@ -38,7 +38,7 @@ export default async function feed() {
 
     const output = await splitter.createDocuments([text]);
 
-    console.log("*********feed started***********");
+    console.log("*****************feed started******************");
     const res = await vectorStore.addDocuments(output);
     console.log(res);
     console.log("*********feed completed successfully***********");
