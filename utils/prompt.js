@@ -1,5 +1,6 @@
 import { ChatOpenAI } from "@langchain/openai";
 import { PromptTemplate } from "@langchain/core/prompts";
+import { StringOutputParser } from "@langchain/core/output_parsers";
 
 import { createClient } from "@supabase/supabase-js";
 import { SupabaseVectorStore } from "@langchain/community/vectorstores/supabase";
@@ -36,7 +37,7 @@ const vectorStore = new SupabaseVectorStore(embeddings, {
     client: supabase,
     //  Below are the defaults, expecting that you set up your supabase table and functions according to the guide above. Please change if necessary.
     similarityK: 2,
-    keywordK: 2,
+    keywordK: 0,
     tableName: "documents",
     similarityQueryName: "match_documents",
     keywordQueryName: "kw_match_documents",
@@ -51,17 +52,33 @@ const promptTemplate = PromptTemplate.fromTemplate(
   "make this prompt as a standalone Question : {prompt}"
 );
 
-const template =  await promptTemplate.pipe(model)
-
-try{
-
-  const chain = await template.invoke({ 
-    prompt: "how scrimba keep learners distraction-free and improve focus on tasks ,do they have anything special events for learners" 
+async function getAnswer( question , context){
+  const prompt = PromptTemplate.fromTemplate(
+    " answer this question based on the context given to you ,here is question : {question} and context : {context}"
+  );
+  
+  const temp =  await prompt.pipe(model).pipe(new StringOutputParser())
+  
+  const response = await temp.invoke({ 
+    question: question,
+    context : context
   });
 
-  const response = await retriever.invoke('if I dn;t like the curses ,can i get my money back')
-  console.log(chain.content)
-  console.log(response);
+  return response
+}
+try{
+  const template =  await promptTemplate.pipe(model).pipe(new StringOutputParser()).pipe(retriever)
+
+   const chain = await template.invoke({ 
+    prompt: "Hi, I'm a vey distracted guy , I didn't complete my many courses I have been Started , how scrimba is going keep me distraction-free and improve focus on tasks" 
+   });
+  // console.log(chain)
+  // const response = await retriever.invoke("how scrimba keep learners distraction-free and improve focus on tasks ,do they have anything special for learners")
+  const context = chain.map(doc=>doc.pageContent).join('\n\n')
+  // console.log(context)
+  console.log(await getAnswer( "Hi, I'm a vey distracted guy , I didn't complete my many courses I have been Started , how scrimba is going keep me distraction-free and improve focus on tasks" , context))
+
+  // console.log(response);
 }catch(err){
   console.log(err)
 }

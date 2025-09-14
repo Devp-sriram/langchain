@@ -8,7 +8,8 @@
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint",
-    "feed": "node --experimental-strip-types utils/fetcher.ts"
+    "feed": "node --experimental-strip-types utils/fetcher.ts",
+    "retrieve":"node utils/prompt.js"
   },
   "dependencies": {
     "@langchain/community": "^0.3.54",
