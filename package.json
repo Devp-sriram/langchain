@@ -9,7 +9,9 @@
     "start": "next start",
     "lint": "eslint",
     "feed": "node --experimental-strip-types utils/fetcher.ts",
-    "retrieve":"node utils/prompt.js"
+    "retrieve":"node utils/prompt.js",
+    "sequence":"node --env-file=.env utils/sequence.js",
+    "seqRetrieve":"node --env-file=.env utils/retrival.js"
   },
   "dependencies": {
     "@langchain/community": "^0.3.54",
