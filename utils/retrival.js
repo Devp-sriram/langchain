@@ -52,10 +52,11 @@ const model = new ChatOpenAI({
 });
 
 function combineDocuments(docs){
+    console.log(docs)
     return docs.map((doc)=>doc.pageContent).join('\n\n')
 }
 
-const standaloneTemplate = "make this question as a standalone Question : {question}"
+const standaloneTemplate = "Given a question, convert it to a standalone question. question: {question} standalone question:"
 
 const endTemplate =`You are a helpful and enthusiastic support bot 
 who chain answer a given question about Scrimba based on the context provided.
@@ -70,34 +71,31 @@ const endPrompt = PromptTemplate.fromTemplate(endTemplate);
 const standaloneChain = RunnableSequence.from([ 
   standalonePrompt ,
   model ,
-  new StringOutputParser()])
+  new StringOutputParser()
+])
 const retrieverChain = RunnableSequence.from([
-      // prev => console.log(prev),
-     // prev => prev.standalone_question,
-      retriever,
+      prev => prev.standalone_question,
+      retriever ,
       combineDocuments
 ])
 const endChain = RunnableSequence.from([endPrompt , model , new StringOutputParser()]) 
 
 const chain = RunnableSequence.from([
-  //{
-   // standalone_question : 
-  standaloneChain
-  //  prevResult :({prevResult})=>console.log(prevResult),
-    //original_input : new RunnablePassthrough()
-  //}
-  ,
   {
-    question : `Hi, I'm a vey distracted guy , I didn't complete my many courses I have been Started , how scrimba is going keep me distraction-free and improve focus on tasks`,
-    // ({original_input}) => original_input.question,
-    context : retrieverChain,
+    standalone_question : standaloneChain,
+    // prevResult :({prevResult})=>console.log(prevResult),
+    original_input : new RunnablePassthrough()
+  },
+  {
+    question : ({original_input}) => original_input.question,
+    context: retrieverChain
   },
   endChain
 ])
 
 
 const response = await chain.invoke({ 
-    question: "Hi, I'm a vey distracted guy , I didn't complete my many courses I have been Started , how scrimba is going keep me distraction-free and improve focus on tasks",
+    question: "What is the specification for running scrimba in my pc ",
 });
 
 console.log(response);
