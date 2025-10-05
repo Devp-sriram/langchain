@@ -23,20 +23,20 @@ if(!SUPABASE_KEY) throw new Error('supabase key key not found')
 const supabase = createClient(SUPABASE_ID, SUPABASE_KEY);
 
 const embeddings = new OpenAIEmbeddings({
-    model: "text-embedding-3-small",
-    apiKey: OPENAI_API_KEY,
+  model: "text-embedding-3-small",
+  apiKey: OPENAI_API_KEY,
 });
 
 const vectorStore = new SupabaseVectorStore(embeddings, {
-    client: supabase,
-    tableName: "documents",
-    queryName: "match_documents",
+  client: supabase,
+  tableName: "documents",
+  queryName: "match_documents",
 });
 
 
 //  const retriever = new SupabaseHybridSearch(embeddings, {
 //  client: supabase,
-  //  Below are the defaults, expecting that you set up your supabase table and functions according to the guide above. Please change if necessary.
+//  Below are the defaults, expecting that you set up your supabase table and functions according to the guide above. Please change if necessary.
 //  similarityK: 2,
 //  keywordK: 2,
 //  tableName: "documents",
@@ -59,9 +59,9 @@ const promptTemplate = PromptTemplate.fromTemplate(
 
 async function getAnswer( question , context){
   const prompt = PromptTemplate.fromTemplate(`You are a helpful and enthusiastic support bot who chain answer a given question about Scrimba based on the context provided. Try to find the answer in the context. If you really don't know the answer, say "I'm sorry, I don't know the answer to that." And direct the questioner to email help@scrimba.com. Don't try to make up an answer. Always speak as if you were chatting to a friend, here is question : {question} and context : {context}`);
-  
+
   const temp =  await prompt.pipe(model).pipe(new StringOutputParser())
-  
+
   const response = await temp.invoke({ 
     question: question,
     context : context
@@ -72,9 +72,9 @@ async function getAnswer( question , context){
 try{
   const template =  await promptTemplate.pipe(model).pipe(new StringOutputParser()).pipe(retriever)
 
-   const chain = await template.invoke({ 
+  const chain = await template.invoke({ 
     prompt: "Hi, I'm a vey distracted guy , I didn't complete my many courses I have been Started , how scrimba is going keep me distraction-free and improve focus on tasks" 
-   });
+  });
   console.log(chain)
   // const response = await retriever.invoke("how scrimba keep learners distraction-free and improve focus on tasks ,do they have anything special for learners")
   const context = chain.map(doc=>doc.pageContent).join('\n\n')

@@ -34,7 +34,7 @@ const vectorStore = new SupabaseVectorStore(embeddings, {
 
 //  const retriever = new SupabaseHybridSearch(embeddings, {
 //  client: supabase,
-  //  Below are the defaults, expecting that you set up your supabase table and functions according to the guide above. Please change if necessary.
+//  Below are the defaults, expecting that you set up your supabase table and functions according to the guide above. Please change if necessary.
 //  similarityK: 2,
 //  keywordK: 2,
 //  tableName: "documents",
@@ -52,8 +52,8 @@ const model = new ChatOpenAI({
 });
 
 function combineDocuments(docs){
-    console.log(docs)
-    return docs.map((doc)=>doc.pageContent).join('\n\n')
+  console.log(docs)
+  return docs.map((doc)=>doc.pageContent).join('\n\n')
 }
 
 const standaloneTemplate = "Given a question, convert it to a standalone question. question: {question} standalone question:"
@@ -74,9 +74,9 @@ const standaloneChain = RunnableSequence.from([
   new StringOutputParser()
 ])
 const retrieverChain = RunnableSequence.from([
-      prev => prev.standalone_question,
-      retriever ,
-      combineDocuments
+  prev => prev.standalone_question,
+  retriever ,
+  combineDocuments
 ])
 const endChain = RunnableSequence.from([endPrompt , model , new StringOutputParser()]) 
 
@@ -95,7 +95,7 @@ const chain = RunnableSequence.from([
 
 
 const response = await chain.invoke({ 
-    question: "What is the specification for running scrimba in my pc ",
+  question: "What is the specification for running scrimba in my pc ",
 });
 
 console.log(response);
@@ -120,7 +120,7 @@ console.log(response);
 //    context : context
 //  });
 
-  // console.log(response);
+// console.log(response);
 ///}catch(err){
 //  console.log(err)
 //}

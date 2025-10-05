@@ -20,9 +20,9 @@ if it's already corrected just return it
 sentence with correct grammar: 
 `
 const translatorTemplate = `
-  Change the language of the given sentence.
-  sentence:{grammar_sentence}
-  language:{language}
+Change the language of the given sentence.
+sentence:{grammar_sentence}
+language:{language}
 `
 const grammarPrompt = PromptTemplate.fromTemplate(grammarTemplate)
 const punctuationPrompt = PromptTemplate.fromTemplate(punctuationTemplate)
